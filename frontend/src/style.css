@@ -1,0 +1,24 @@
+html {
+    color: black;
+}
+
+body {
+    margin: 0;
+    color: black;
+    font-family: "SmileySans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+    font-size: small;
+}
+
+@font-face {
+    font-family: "SmileySans";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""),
+        url("assets/fonts/SmileySans-Oblique.ttf.woff2") format("woff2");
+}
+
+#app {
+    height: 100vh;
+}
