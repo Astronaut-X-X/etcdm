@@ -24,14 +24,14 @@ import {
   SettingsOutline as SettingsIcon,
 } from '@vicons/ionicons5';
 import type { Component } from 'vue';
-import { h, ref, computed } from 'vue';
+import { h, ref, computed, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router'
 import { getConfig } from './config';
 
 // 从配置中获取主题设置并创建响应式引用
 const theme = computed(() => {
   const config = getConfig();
-  console.log('[config]',config);
+  console.log('[config]', config);
   return config?.theme;
 });
 
@@ -58,12 +58,23 @@ function renderIcon(icon: Component) {
 }
 
 const router = useRouter();
-const route = useRoute();
 
 const activeKey = ref('data');
 function handleUpdateValue(key: string, item: MenuOption) {
   router.push({ path: "/" + key });
 }
+const route = useRoute();
+
+// 监听路由变化，同步更新菜单选中状态
+watch(
+  () => route.path,
+  (newPath) => {
+    // 去除路径开头的斜杠，获取一级路由名称
+    const routeName = newPath.split('/')[1] || 'data';
+    activeKey.value = routeName;
+  },
+  { immediate: true }
+);
 
 </script>
 

@@ -2,14 +2,19 @@
   <n-layout has-sider position="absolute">
     <n-layout-sider bordered width="240">
       <n-card :bordered="false" size="small" title="Data Manager">
-        <n-select v-model:value="connctionId" :options="options" size="small" style="margin-bottom: 8px;"
-          @update:value="loadTree" />
+        <n-select v-if="showSelect" v-model:value="connctionId" :options="options" size="small"
+          style="margin-bottom: 8px;" @update:value="loadTree" />
         <!-- <n-input-group style="margin-bottom: 20px;">
           <n-input size="small" />
           <n-button size="small">
             搜索
           </n-button>
         </n-input-group> -->
+        <n-flex v-else vertical justify="center" style="margin: 8px 0 24px;">
+          <n-button size="small" @click="createConneion">
+            Create Connection
+          </n-button>
+        </n-flex>
 
         <n-flex vertical justify="center">
           <n-tree block-line :data="tree"
@@ -21,25 +26,49 @@
       <n-card :bordered="false" size="small" style="height: 100%;">
         <n-data-table size="small" :columns="columns" :data="tabel" :pagination="pagination" :bordered="false" />
       </n-card>
+
+      <!--  -->
+      <n-modal v-model:show="showModal">
+        <n-card style="width: 60%" title="Edit" :bordered="false" size="small" role="dialog" aria-modal="true">
+          <n-form size="small" label-placement="left" label-width="auto">
+            <n-form-item label="Key">
+              <n-input v-model:value="currentData.key" />
+            </n-form-item>
+            <n-form-item label="Value">
+              <n-input type="textarea" :autosize="{ minRows: 20, maxRows: 20 }" v-model:value="formattedValue" />
+            </n-form-item>
+          </n-form>
+          <template #footer>
+            <n-flex justify="end">
+              <n-button @click="showModal = false">
+                Cancel
+              </n-button>
+              <n-button type="primary" @click="saveData">
+                Save
+              </n-button>
+            </n-flex>
+          </template>
+        </n-card>
+      </n-modal>
     </n-layout-content>
   </n-layout>
 </template>
 
 <script lang="ts" setup>
-import { NLayout, NLayoutSider, NLayoutContent } from 'naive-ui';
+import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput } from 'naive-ui';
 import { NSelect, NFlex, NCard, NTree, NDataTable, NButton } from 'naive-ui';
 import type { TreeOption, TreeOverrideNodeClickBehavior } from 'naive-ui';
-import { ref, h } from 'vue';
+import { ref, h, computed } from 'vue';
 import { Connection } from '../connection/connection_model';
 import { useConnection } from '../connection/use-connection';
-import { KeyItem } from './data_model';
 import { useData } from './use-data';
-
+import router from '../../router';
 
 const $connection = useConnection();
 const $data = useData();
 
 // region list
+const showSelect = ref(false);
 const connctionId = ref("");
 const options = ref<{ label: string, value: string }[]>();
 async function loadData() {
@@ -60,6 +89,11 @@ async function loadData() {
         value: item.id,
       };
     });
+    if (options.value && options.value.length > 0) {
+      connctionId.value = options.value[0].value;
+      showSelect.value = true;
+      loadTree();
+    }
   }
 }
 loadData();
@@ -112,6 +146,8 @@ const columns = [
             size: 'small',
             onClick: () => {
               console.log(row);
+              currentData.value = row;
+              showModal.value = true;
             }
           },
           { default: () => 'Edit' }
@@ -120,7 +156,7 @@ const columns = [
           {
             strong: true,
             tertiary: true,
-            size:'small',
+            size: 'small',
             style: {
               marginLeft: '8px',
             },
@@ -133,27 +169,6 @@ const columns = [
       ]
     }
   }
-
-  // {
-  //   title: 'CreRevision',
-  //   key: 'create_revision',
-  //   width: 90,
-  // },
-  // {
-  //   title: 'ModRevision',
-  //   key: 'mod_revision', 
-  //   width: 90,
-  // },
-  // {
-  //   title: 'Version',
-  //   key: 'version',
-  //   width: 90,
-  // },
-  // {
-  //   title: 'Lease',
-  //   key: 'lease',
-  //   width: 90,
-  // }
 ];
 const tabel = ref();
 const pagination = ref({
@@ -185,6 +200,46 @@ async function loadTabel(prefix: string) {
   }
 }
 // endregion page
+
+// region action
+function createConneion() {
+  router.push('/connection');
+}
+// endregion action
+
+// region edit
+const currentData = ref({
+  key: '',
+  value: '',
+});
+const showModal = ref(false);
+
+// 格式化JSON显示
+const formattedValue = computed({
+  get() {
+    try {
+      const parsed = JSON.parse(currentData.value.value);
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return currentData.value.value;
+    }
+  },
+  set(val: string) {
+    currentData.value.value = val;
+  }
+});
+
+// 保存时尝试压缩JSON
+const saveData = () => {
+  try {
+    const parsed = JSON.parse(formattedValue.value);
+    currentData.value.value = JSON.stringify(parsed);
+  } catch {
+    // 如果不是有效的JSON，保持原值
+  }
+  showModal.value = false;
+}
+// endregion edit
 
 </script>
 

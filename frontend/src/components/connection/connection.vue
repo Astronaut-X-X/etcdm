@@ -10,12 +10,12 @@
           </n-button>
         </template>
 
-        <n-input-group style="margin-bottom: 20px;">
+        <!-- <n-input-group style="margin-bottom: 20px;">
           <n-input size="small" />
           <n-button size="small">
             Srearch
           </n-button>
-        </n-input-group>
+        </n-input-group> -->
 
         <n-flex vertical justify="center">
           <n-flex justify="space-between" v-for="item in list" :key="item.id">
