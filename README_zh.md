@@ -55,3 +55,9 @@
 
 ```bash
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
+```
+
+### 构建项目
+```bash
+wails build
+```

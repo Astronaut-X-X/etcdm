@@ -54,3 +54,12 @@ Available to download for free from [here](https://github.com/Astronaut-X-X/etcd
 * NPM >= 9
 
 ### Install Wails
+
+```bash
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+```
+
+### Build Project
+```bash
+wails build
+```
