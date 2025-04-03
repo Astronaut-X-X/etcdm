@@ -165,7 +165,7 @@ async function loadTree() {
 loadTree();
 
 const clickItem = (info: { option: TreeOption }) => {
-  currentPrefix.value = info.option.key;
+  currentPrefix.value = info.option.key as string;
   loadTabel(currentPrefix.value);
 }
 // endregion tree
