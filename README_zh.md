@@ -30,13 +30,12 @@
 
 * 超轻量级，基于 Webview2 构建，无内嵌浏览器（感谢 [Wails](https://github.com/wailsapp/wails)）
 * 提供视觉友好的用户界面，支持明暗主题（感谢 [Naive UI](https://github.com/tusen-ai/naive-ui) 和 [IconPark](https://iconpark.oceanengine.com)）
-* 多语言支持（[需要更多语言？点击这里贡献](.github/CONTRIBUTING.md)）
-* 更好的连接管理：支持 SSL/HTTP 代理/SOCKS5 代理
 * 可视化的键值操作，支持键值对的增删改查
+
+## 待办
+
+* 多语言支持
 * 支持多种数据查看格式
-* 使用列表分段加载，轻松处理数百万个键
-* 命令操作历史日志列表
-* 提供命令行模式
 * 支持数据导入/导出
 * 支持连接配置导入/导出
 
@@ -44,16 +43,11 @@
 
 可以从[这里](https://github.com/Astronaut-X-X/etcdm/releases)免费下载。
 
-> 如果在 macOS 上安装后无法打开，请执行以下命令后重新打开：
-> ```shell
-> sudo xattr -d com.apple.quarantine /Applications/ETCDM.app
-> ```
-
 ## 构建指南
 
 ### 环境要求
 
-* Go（最新版本）
+* Go >= 1.23.0
 * Node.js >= 16
 * NPM >= 9
 

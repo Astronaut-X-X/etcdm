@@ -28,36 +28,28 @@ Linux.</strong>
  <img alt="screenshot" src="docs/screenshots/dark_en2.jpg">
 </picture>
 
-## Feature
+## Features
 
-* Super lightweight, built on Webview2, without embedded browsers (Thanks
-  to [Wails](https://github.com/wailsapp/wails)).
-* Provides visually and user-friendly UI, light and dark themes (Thanks to [Naive UI](https://github.com/tusen-ai/naive-ui)
-  and [IconPark](https://iconpark.oceanengine.com)).
-* Multi-language support ([Need more languages ? Click here to contribute](.github/CONTRIBUTING.md)).
-* Better connection management: supports SSL/HTTP proxy/SOCKS5 proxy.
-* Visualize key value operations, CRUD support for key-value pairs.
-* Support multiple data viewing format.
-* Use list for segmented loading, making it easy to list millions of keys.
-* Logs list for command operation history.
-* Provides command-line mode.
-* Support import/export data.
-* Support import/export connection profile.
+* Super lightweight, built on Webview2, without embedded browsers (Thanks to [Wails](https://github.com/wailsapp/wails))
+* Provides visually and user-friendly UI, light and dark themes (Thanks to [Naive UI](https://github.com/tusen-ai/naive-ui) and [IconPark](https://iconpark.oceanengine.com))
+* Visualize key value operations, CRUD support for key-value pairs
+
+## TODO
+
+* Multi-language support
+* Support multiple data viewing formats 
+* Support import/export data
+* Support import/export connection profiles
 
 ## Installation
 
 Available to download for free from [here](https://github.com/Astronaut-X-X/etcdm/releases).
 
-> If you can't open it after installation on macOS, exec the following command then reopen:
-> ``` shell
->  sudo xattr -d com.apple.quarantine /Applications/ETCDM.app
-> ```
-
 ## Build Guidelines
 
 ### Prerequisites
 
-* Go (latest version)
+* Go >= 1.23.0
 * Node.js >= 16
 * NPM >= 9
 
