@@ -2,6 +2,13 @@
   <n-layout has-sider position="absolute">
     <n-layout-sider bordered width="240">
       <n-card :bordered="false" size="small" title="Data Manager">
+        <template #header-extra>
+          <n-button size="tiny" @click="loadData">
+            <n-icon>
+              <RefreshIcon />
+            </n-icon>
+          </n-button>
+        </template>
         <n-select v-if="showSelect" v-model:value="connctionId" :options="options" size="small"
           style="margin-bottom: 8px;" @update:value="loadTree" />
         <!-- <n-input-group style="margin-bottom: 20px;">
@@ -76,9 +83,12 @@
 </template>
 
 <script lang="ts" setup>
-import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput, c } from 'naive-ui';
+import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput, NIcon } from 'naive-ui';
 import { NSelect, NFlex, NCard, NTree, NDataTable, NButton } from 'naive-ui';
 import type { TreeOption, TreeOverrideNodeClickBehavior } from 'naive-ui';
+import {
+  Refresh as RefreshIcon,
+} from '@vicons/ionicons5';
 import { ref, h, computed } from 'vue';
 import { Connection } from '../connection/connection_model';
 import { useConnection } from '../connection/use-connection';
