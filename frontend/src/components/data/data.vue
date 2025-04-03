@@ -42,7 +42,12 @@
           <n-flex>
           </n-flex>
         </n-flex>
-        <n-data-table size="small" :columns="columns" :data="tabel" :pagination="pagination" :bordered="false" />
+        <n-data-table size="small" :columns="columns" :data="tabel" :bordered="false" />
+        <n-flex justify="end" style="margin-top: 8px;">
+          <n-pagination show-size-picker :page="pagination.page" :page-size="pagination.pageSize" 
+          :page-count="pagination.total" :page-sizes="pagination.pageSizes"
+          @update:page="changePage" @update:page-size="changePageSize"/>
+        </n-flex>
       </n-card>
 
       <!--  -->
@@ -53,7 +58,7 @@
           </n-form-item>
           <n-form-item label="Value">
             <n-input type="textarea" :autosize="{ minRows: 20, maxRows: 20 }" v-model:value="formattedValue" />
-          </n-form-item>
+          </n-form-item>  
         </n-form>
         <template #footer>
           <n-flex justify="end">
@@ -95,7 +100,7 @@
 
 <script lang="ts" setup>
 import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput, NIcon } from 'naive-ui';
-import { NSelect, NFlex, NCard, NTree, NDataTable, NButton } from 'naive-ui';
+import { NSelect, NFlex, NCard, NTree, NDataTable, NButton, NPagination } from 'naive-ui';
 import type { TreeOption, TreeOverrideNodeClickBehavior } from 'naive-ui';
 import {
   Refresh as RefreshIcon,
@@ -143,6 +148,7 @@ loadData();
 // endregion list
 
 // region tree
+const currentPrefix = ref('');
 const tree = ref<TreeOption[]>();
 async function loadTree() {
   const req = {
@@ -159,9 +165,8 @@ async function loadTree() {
 loadTree();
 
 const clickItem = (info: { option: TreeOption }) => {
-  console.log(info);
-  const prefix = info.option.key;
-  loadTabel(prefix as string);
+  currentPrefix.value = info.option.key;
+  loadTabel(currentPrefix.value);
 }
 // endregion tree
 
@@ -221,7 +226,7 @@ const pagination = ref({
   page: 1,
   pageSize: 10,
   total: 0,
-  pageSizes: [10, 20, 50, 100],
+  pageSizes: [10, 20, 50],
   showSizePicker: true,
   showQuickJumper: true,
 })
@@ -233,7 +238,7 @@ async function loadTabel(prefix: string) {
     keyword: "",
     params: {
       id: connctionId.value,
-      prefix: prefix,
+      prefix: prefix + '/',
     }
   };
   console.log(req);
@@ -242,8 +247,17 @@ async function loadTabel(prefix: string) {
     console.log(r.data);
     const { data, total } = r.data;
     tabel.value = data;
-    pagination.value.total = total;
+    pagination.value.total = (total / req.size)+1 | 0;
   }
+}
+const changePage = (page: number) => {
+  pagination.value.page = page;
+  loadTabel(currentPrefix.value);
+}
+const changePageSize = (pageSize: number) => {
+  pagination.value.page = 1;
+  pagination.value.pageSize = pageSize;
+  loadTabel(currentPrefix.value);
 }
 // endregion page
 
