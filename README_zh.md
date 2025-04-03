@@ -15,15 +15,15 @@
 </div>
 
 <picture>
- <source media="(prefers-color-scheme: dark)" srcset="screenshots/dark_en.png">
- <source media="(prefers-color-scheme: light)" srcset="screenshots/light_en.png">
- <img alt="screenshot" src="screenshots/dark_en.png">
+ <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark_en.jpg">
+ <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/light_en.jpg">
+ <img alt="screenshot" src="docs/screenshots/dark_en.jpg">
 </picture>
 
 <picture>
- <source media="(prefers-color-scheme: dark)" srcset="screenshots/dark_en2.png">
- <source media="(prefers-color-scheme: light)" srcset="screenshots/light_en2.png">
- <img alt="screenshot" src="screenshots/dark_en2.png">
+ <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/dark_en2.jpg">
+ <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/light_en2.jpg">
+ <img alt="screenshot" src="docs/screenshots/dark_en2.jpg">
 </picture>
 
 ## 特性
