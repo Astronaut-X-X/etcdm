@@ -18,7 +18,7 @@
         </n-input-group> -->
 
         <n-flex vertical justify="center">
-          <n-flex justify="space-between" v-for="item in list" :key="item.id">
+          <n-flex justify="space-between" v-for="item in list" :key="item.id" class="connction-line">
             <n-button text tag="a" size="small" @click="() => { loadItem(item.id) }">
               {{ item.name }}
             </n-button>
@@ -295,4 +295,16 @@ async function handleDelete(id: string) {
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.connction-line{
+  background:rgba(250, 250, 252, 1);
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+  transition: all 0.3s;
+}
+
+.connction-line:hover{
+  background:rgba(240, 240, 242, 1);
+}
+</style>

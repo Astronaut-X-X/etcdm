@@ -31,6 +31,17 @@
     </n-layout-sider>
     <n-layout-content>
       <n-card :bordered="false" size="small" style="height: 100%;">
+        <n-flex justify="space-between" style="width: 100%; margin-bottom: 8px;">
+          <n-flex>
+            <n-button size="tiny" @click="create()">
+              <n-icon>
+                <AddIcon />
+              </n-icon>
+            </n-button>
+          </n-flex>
+          <n-flex>
+          </n-flex>
+        </n-flex>
         <n-data-table size="small" :columns="columns" :data="tabel" :pagination="pagination" :bordered="false" />
       </n-card>
 
@@ -88,6 +99,7 @@ import { NSelect, NFlex, NCard, NTree, NDataTable, NButton } from 'naive-ui';
 import type { TreeOption, TreeOverrideNodeClickBehavior } from 'naive-ui';
 import {
   Refresh as RefreshIcon,
+  Add as AddIcon,
 } from '@vicons/ionicons5';
 import { ref, h, computed } from 'vue';
 import { Connection } from '../connection/connection_model';
@@ -302,6 +314,16 @@ const deleteData = async () => {
   }
 }
 // endregion delete
+
+// region create
+const create = () => {
+  currentData.value = {
+    key: '',
+    value: '',
+  };
+  showModal.value = true;
+}
+// endregion create
 
 </script>
 
