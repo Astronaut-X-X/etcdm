@@ -60,6 +60,20 @@ export namespace dto {
 	        this.id = source["id"];
 	    }
 	}
+	export class DeleteDataRequest {
+	    id: string;
+	    key: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeleteDataRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.key = source["key"];
+	    }
+	}
 	export class GetConnectionRequest {
 	    id: string;
 	
@@ -157,6 +171,22 @@ export namespace dto {
 		    }
 		    return a;
 		}
+	}
+	export class PutDataRequest {
+	    id: string;
+	    key: string;
+	    value: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PutDataRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.key = source["key"];
+	        this.value = source["value"];
+	    }
 	}
 	export class TestConnectionRequest {
 	    id: string;

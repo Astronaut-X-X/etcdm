@@ -18,3 +18,14 @@ type DataItem struct {
 	Value          string ` json:"value,omitempty"`
 	Lease          int64  ` json:"lease,omitempty"`
 }
+
+type PutDataRequest struct {
+	ID    string `json:"id"`
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+type DeleteDataRequest struct {
+	ID  string `json:"id"`
+	Key string `json:"key"`
+}

@@ -6,6 +6,8 @@ import (
 	"go.etcd.io/etcd/clientv3"
 )
 
+// =========== =========== =========== list data =========== =========== ===========
+
 // 定义一个接口来约束参数类型
 type PrefixGetter interface {
 	GetPrefix() string
@@ -53,4 +55,50 @@ func ListData[T []*KV, P PrefixGetter](c *Client, param P) (T, error) {
 	}
 
 	return keys, nil
+}
+
+// =========== =========== =========== put data =========== =========== ===========
+
+// 定义一个接口来约束参数类型
+type KeyValueGetter interface {
+	GetValue() string
+	GetKey() string
+}
+
+type PutDataParams struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
+func (p PutDataParams) GetValue() string {
+	return p.Value
+}
+func (p PutDataParams) GetKey() string {
+	return p.Key
+}
+
+func PutData[T bool, P KeyValueGetter](c *Client, param P) (T, error) {
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	_, err := c.Client.Put(ctx, param.GetKey(), param.GetValue())
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// =========== =========== =========== delete data =========== =========== ===========
+
+func DeleteData[T bool, P string](c *Client, key P) (T, error) {
+	ctx, cancel := context.WithTimeout(c.ctx, c.timeout)
+	defer cancel()
+
+	_, err := c.Client.Delete(ctx, string(key))
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

@@ -28,34 +28,55 @@
       </n-card>
 
       <!--  -->
-      <n-modal v-model:show="showModal">
-        <n-card style="width: 60%" title="Edit" :bordered="false" size="small" role="dialog" aria-modal="true">
-          <n-form size="small" label-placement="left" label-width="auto">
-            <n-form-item label="Key">
-              <n-input v-model:value="currentData.key" />
-            </n-form-item>
-            <n-form-item label="Value">
-              <n-input type="textarea" :autosize="{ minRows: 20, maxRows: 20 }" v-model:value="formattedValue" />
-            </n-form-item>
-          </n-form>
-          <template #footer>
-            <n-flex justify="end">
-              <n-button @click="showModal = false">
-                Cancel
-              </n-button>
-              <n-button type="primary" @click="saveData">
-                Save
-              </n-button>
-            </n-flex>
-          </template>
-        </n-card>
+      <n-modal v-model:show="showModal" preset="card" style="width: 60%;">
+        <n-form size="small" label-placement="left" label-width="auto">
+          <n-form-item label="Key">
+            <n-input v-model:value="currentData.key" />
+          </n-form-item>
+          <n-form-item label="Value">
+            <n-input type="textarea" :autosize="{ minRows: 20, maxRows: 20 }" v-model:value="formattedValue" />
+          </n-form-item>
+        </n-form>
+        <template #footer>
+          <n-flex justify="end">
+            <n-button type="tertiary" @click="showModal = false">
+              Cancel
+            </n-button>
+            <n-button type="primary" @click="saveData">
+              Save
+            </n-button>
+          </n-flex>
+        </template>
+      </n-modal>
+
+      <!--  -->
+      <n-modal v-model:show="showDeleteModal" preset="card" style="width: 60%;">
+        <n-form size="small" label-placement="left" label-width="auto">
+          <n-form-item label="Key">
+            <n-input v-model:value="currentData.key" :disabled="true" />
+          </n-form-item>
+          <n-form-item label="Value">
+            <n-input type="textarea" :autosize="{ minRows: 20, maxRows: 20 }" v-model:value="formattedValue"
+              :disabled="true" />
+          </n-form-item>
+        </n-form>
+        <template #footer>
+          <n-flex justify="end">
+            <n-button type="tertiary" @click="showDeleteModal = false">
+              Cancel
+            </n-button>
+            <n-button type="error" @click="deleteData">
+              Delete
+            </n-button>
+          </n-flex>
+        </template>
       </n-modal>
     </n-layout-content>
   </n-layout>
 </template>
 
 <script lang="ts" setup>
-import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput } from 'naive-ui';
+import { NLayout, NLayoutSider, NLayoutContent, NModal, NForm, NFormItem, NInput, c } from 'naive-ui';
 import { NSelect, NFlex, NCard, NTree, NDataTable, NButton } from 'naive-ui';
 import type { TreeOption, TreeOverrideNodeClickBehavior } from 'naive-ui';
 import { ref, h, computed } from 'vue';
@@ -162,6 +183,9 @@ const columns = [
             },
             onClick: () => {
               console.log(row);
+              currentData.value = row;
+              deleteKey.value = row.key;
+              showDeleteModal.value = true;
             }
           },
           { default: () => 'Del' }
@@ -230,16 +254,44 @@ const formattedValue = computed({
 });
 
 // 保存时尝试压缩JSON
-const saveData = () => {
+const saveData = async () => {
   try {
     const parsed = JSON.parse(formattedValue.value);
     currentData.value.value = JSON.stringify(parsed);
   } catch {
     // 如果不是有效的JSON，保持原值
   }
+  const req = {
+    id: connctionId.value,
+    key: currentData.value.key,
+    value: currentData.value.value,
+  };
+  const r = await $data.api.putData(req);
+  if (r.success) {
+    loadTabel(currentData.value.key);
+    // todo tip
+  }
+
   showModal.value = false;
 }
 // endregion edit
+
+// region delete
+const showDeleteModal = ref(false);
+const deleteKey = ref('');
+const deleteData = async () => {
+  const req = {
+    id: connctionId.value,
+    key: deleteKey.value,
+  };
+  const r = await $data.api.deleteData(req);
+  if (r.success) {
+    loadTabel(currentData.value.key);
+    showDeleteModal.value = false;
+    // todo tip 
+  }
+}
+// endregion delete
 
 </script>
 
