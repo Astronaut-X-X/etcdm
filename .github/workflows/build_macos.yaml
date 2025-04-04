@@ -22,11 +22,13 @@ jobs:
     
     steps:
       - name: Set Platform Tag
+        id: platform_tag
         run: |
           tag=$(echo ${{ matrix.platform }} | sed -e 's/\//_/g' -e 's/darwin/mac/g' -e 's/amd64/intel/g')
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Set Version Tag
+        id: version_tag
         run: |
           if [ "${{ github.event.release.tag_name }}" == "" ]; then
             version=$(echo ${{ github.event.inputs.tag }} | sed -e 's/v//g')
@@ -74,17 +76,17 @@ jobs:
             --icon "etcdm.app" 180 180 \
             --hide-extension "etcdm.app" \
             --app-drop-link 480 180 \
-            "bin/etcdm-${{ steps.normalise_platform.outputs.tag }}.dmg" \
+            "bin/etcdm-${{ steps.platform_tag.outputs.tag }}.dmg" \
             "bin"
 
       - name: Rename dmg
         working-directory: ./build/bin
-        run: mv "etcdm-${{ steps.normalise_platform.outputs.tag }}.dmg" \ 
-          "etcdm_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.dmg"
+        run: mv "etcdm-${{ steps.platform_tag.outputs.tag }}.dmg" \ 
+          "etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.dmg"
 
       - name: Upload release asset (DMG Package)
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.normalise_version.outputs.version }}
-          files: ./build/bin/etcdm_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.dmg
+          tag_name: v${{ steps.version_tag.outputs.version }}
+          files: ./build/bin/etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.dmg
           token: ${{ secrets.GITHUB_TOKEN }}
