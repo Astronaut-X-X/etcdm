@@ -1,6 +1,8 @@
 name: Build
 
 on: 
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       tag:
@@ -19,32 +21,71 @@ jobs:
           - darwin/arm64
     
     steps:
+      - name: Set Platform Tag
+        run: |
+          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//_/g' -e 's/darwin/mac/g' -e 's/amd64/intel/g')
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Set Version Tag
+        run: |
+          if [ "${{ github.event.release.tag_name }}" == "" ]; then
+            version=$(echo ${{ github.event.inputs.tag }} | sed -e 's/v//g')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          else
+            version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Checkout Code
         uses: actions/checkout@v4
       
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.23.2'
+          go-version: '1.23.7'
           
-      - name: Debug 
+      - name: Install Wails
         run: |
-          echo ${{ matrix.platform }}
-
-      # - name: Install Wails
-      #   run: |
-      #     go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
           
-      # - name: Build
-      #   run: |
-      #     wails build
+      - name: Build
+        run: |
+          CGO_ENABLED=1 wails build -platform ${{ matrix.platform }}
+     
+      - name: Checkout create-image
+        uses: actions/checkout@v2
+        with:
+          repository: create-dmg/create-dmg
+          path: ./build/create-dmg
+          ref: master
 
-      # - name: dmg
-      #   run: |
-      #     dmg --source=dist --target=dist --overwrite
+      - name: Build MacOS DMG
+        shell: bash
+        working-directory: ./build
+        run: |
+          ./create-dmg/create-dmg \
+            --no-internet-enable \
+            --volname "etcdm" \
+            --volicon "bin/etcdm.app/Contents/Resources/iconfile.icns" \
+            --background "dmg/background.tiff" \
+            --text-size 12 \
+            --window-pos 400 400 \
+            --window-size 660 450 \
+            --icon-size 80 \
+            --icon "etcdm.app" 180 180 \
+            --hide-extension "etcdm.app" \
+            --app-drop-link 480 180 \
+            "bin/etcdm-${{ steps.normalise_platform.outputs.tag }}.dmg" \
+            "bin"
 
-      # - name: Upload
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: dmg
-      #     path: dist/app.dmg
+      - name: Rename dmg
+        working-directory: ./build/bin
+        run: mv "etcdm-${{ steps.normalise_platform.outputs.tag }}.dmg" \ 
+          "etcdm_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.dmg"
+
+      - name: Upload release asset (DMG Package)
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.normalise_version.outputs.version }}
+          files: ./build/bin/etcdm_${{ steps.normalise_version.outputs.version }}_${{ steps.normalise_platform.outputs.tag }}.dmg
+          token: ${{ secrets.GITHUB_TOKEN }}
