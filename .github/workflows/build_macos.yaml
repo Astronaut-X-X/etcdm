@@ -81,8 +81,7 @@ jobs:
 
       - name: Rename dmg
         working-directory: ./build/bin
-        run: mv "etcdm-${{ steps.platform_tag.outputs.tag }}.dmg" \ 
-          "etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.dmg"
+        run: mv "etcdm-${{ steps.platform_tag.outputs.tag }}.dmg" "etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.dmg"
 
       - name: Upload release asset (DMG Package)
         uses: softprops/action-gh-release@v1
