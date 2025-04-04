@@ -77,7 +77,7 @@ jobs:
             --hide-extension "etcdm.app" \
             --app-drop-link 480 180 \
             "bin/etcdm-${{ steps.platform_tag.outputs.tag }}.dmg" \
-            "bin"
+            "bin/etcdm.app/"
 
       - name: Rename dmg
         working-directory: ./build/bin
