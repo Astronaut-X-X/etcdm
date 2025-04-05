@@ -63,3 +63,11 @@ go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```bash
 wails build
 ```
+
+### Notinges
+
+If you get a "damaged and can't be opened" error after installing on macOS, run the following command.
+
+```bash
+ sudo xattr -d com.apple.quarantine /Applications/etcdm.app
+```
