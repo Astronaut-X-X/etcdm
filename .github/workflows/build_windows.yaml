@@ -1,0 +1,66 @@
+name: Build
+
+on: 
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version Tag'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  release:
+    name: Release Windows 
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        platform:
+          - windows/amd64
+          - windows/arm64
+    
+    steps:
+      - name: Set Platform Tag
+        id: platform_tag
+        run: |
+          tag=$(echo ${{ matrix.platform }} | sed -e 's/\//_/g' -e 's/darwin/mac/g')
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Set Version Tag
+        id: version_tag
+        run: |
+          if [ "${{ github.event.release.tag_name }}" == "" ]; then
+            version=$(echo ${{ github.event.inputs.tag }} | sed -e 's/v//g')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          else
+            version=$(echo ${{ github.event.release.tag_name }} | sed -e 's/v//g')
+            echo "version=$version" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.7'
+          
+      - name: Install Wails
+        run: |
+          go install github.com/wailsapp/wails/v2/cmd/wails@latest
+          
+      - name: Build
+        run: |
+          CGO_ENABLED=1 wails build -platform ${{ matrix.platform }}
+     
+      - name: Rename Exe
+        working-directory: ./build/bin
+        run: mv "etcdm.exe" "etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.exe"
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version_tag.outputs.version }}
+          files: ./build/bin/etcdm_${{ steps.version_tag.outputs.version }}_${{ steps.platform_tag.outputs.tag }}.exe
+          token: ${{ secrets.GITHUB_TOKEN }}
