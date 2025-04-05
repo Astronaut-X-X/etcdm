@@ -61,3 +61,12 @@ go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```bash
 wails build
 ```
+
+
+### 注意事项
+
+如果在 macOS 上安装后出现"已损坏，无法打开"的错误提示，请在终端中运行以下命令：
+
+```bash
+ sudo xattr -d com.apple.quarantine /Applications/etcdm.app
+```
