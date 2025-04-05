@@ -56,8 +56,8 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          CGO_ENABLED=1 wails build -platform ${{ matrix.platform }} -webview2 embed
-     
+          CGO_ENABLED=1 wails build -clean -platform ${{ matrix.platform }} -webview2 embed
+
       - name: Rename Exe
         working-directory: ./build/bin
         shell: bash
